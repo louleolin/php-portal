@@ -6,6 +6,7 @@
  * Time: 8:48 AM
  */
 
+ session_start();
 
 class Application
 {
@@ -20,11 +21,11 @@ class Application
         if ($url == '' || $url == '/'){
             $this->controller = 'site';
             $this->action = 'index';
-        }elseif (preg_match('/[a-zA-Z]+(\/[a-zA-z]+)/',$url)){
+        }elseif (preg_match('/^[a-zA-Z]+(\/[a-zA-z]+)$/',$url)){
             $url_array = explode('/',$url);
             $this->controller = $url_array[0];
             $this->action = $url_array[1];
-        }elseif(preg_match('/[a-zA-Z]+(\/[a-zA-z]+)+(\/[0-9]+)/',$url)){
+        }elseif(preg_match('/^[a-zA-Z]+(\/[a-zA-z]+)+(\/[0-9]+)$/',$url)){
             $url_array = explode('/',$url);
             $this->controller = $url_array[0];
             $this->action = $url_array[1];
@@ -43,6 +44,9 @@ class Application
 
     public function dispatch($url)
     {
+        if (!isset($_SESSION['login_user_id'])) {
+          $url = '';
+        }
         if ($this->match($url)) {
             $controller = $this->convertToController($this->controller);
             $this->loadController($controller);
@@ -67,5 +71,10 @@ class Application
     protected function convertToAction($string)
     {
         return 'action'.ucfirst(strtolower(str_replace(' ', '', (str_replace('-', ' ', $string)))));
+    }
+
+    public static function log($log_msg){
+      $log_filename = "log.txt";
+      file_put_contents($log_filename, $log_msg . "\n", FILE_APPEND);
     }
 }

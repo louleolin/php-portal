@@ -4,9 +4,11 @@ CREATE DATABASE portal;
 
 USE portal;
 
-CREATE USER 'portal'@'%' IDENTIFIED BY 'portal';
+DROP USER IF EXISTS 'portal';
 
-GRANT ALL PRIVILEGES ON * . * TO 'portal'@'%';
+CREATE USER 'portal'@'%' IDENTIFIED WITH mysql_native_password BY 'portal';
+
+GRANT ALL PRIVILEGES ON portal . * TO 'portal'@'%';
 
 FLUSH PRIVILEGES;
 

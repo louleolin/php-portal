@@ -1,27 +1,43 @@
 <?php
 
-require_once(__DIR__.'/../framework/Controller.php');
-require_once(__DIR__.'/../model/User.php');
+require_once(__DIR__.'/../framework/config.php');
+require_once(__DIR__.'/../model/model_config.php');
 
+session_start();
 
 class SiteController extends Controller
 {
+    protected $viewFolder = 'site';
+
+
     public function actionIndex(){
+      if (isset($_SESSION['login_user_id'])) {
+        $this->redirect('/site/admin');
+      }
+
         $error = null;
         if (isset($_POST['LoginForm'])) {
             $email = $_POST['LoginForm']['username'];
             $password = md5($_POST['LoginForm']['password']);
             $user = new User();
-            if ($user->findAllByAttributes(array('email'=>'admin@admin.com'))){
-                $this->render('admin');
+            $user = $user->findAllByAttributes(array('email'=>$email,'password'=>$password),true);
+            if (isset($user)){
+                $_SESSION['login_user_id'] = $user->id;
+                $this->redirect('site/admin');
+            }else{
+              $error = 'Invalid Username or Password! Please try agian.';
             }
-        }else{
-            $this->render('login',array('error'=>$error));
         }
+
+        $this->render('login',array('error'=>$error));
     }
 
     public function actionAdmin(){
         $this->render('admin');
+    }
+
+    public function actionError($code){
+        $this->render('error_'.$code);
     }
 
 }

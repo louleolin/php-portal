@@ -6,17 +6,19 @@
  * Time: 9:17 AM
  */
 
-require(__DIR__.'/../framework/Model.php');
+require_once(__DIR__.'/../framework/config.php');
+require_once(__DIR__.'/model_config.php');
+
 
 
 class User extends Model
 {
     protected $password;
-    protected $firstname;
-    protected $lastname;
-    protected $email;
-    protected $id;
-    protected $role_id;
+    public $firstname;
+    public $lastname;
+    public $email;
+    public $id;
+    public $role_id;
 
     protected $attributes = ['password','firstname','lastname','email','role_id'];
     protected $model_name = 'User';
@@ -26,4 +28,9 @@ class User extends Model
         return true;
     }
 
+    public function getRole(){
+      $current_user_role = new Role();
+      $current_user_role = $current_user_role->findByPk($this->role_id);
+      return $current_user_role->task;
+    }
 }

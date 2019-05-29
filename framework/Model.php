@@ -7,7 +7,7 @@
  */
 
 
-include 'config.php';
+require_once('config.php');
 
 abstract class Model
 {
@@ -31,7 +31,7 @@ abstract class Model
         return $db;
     }
 
-    public function findAllByAttributes(array $params){
+    public function findAllByAttributes(array $params,$return_first = false){
         $model_file= __DIR__.'/../model/'.$this->model_name.'.php';
         require_once ($model_file);
 
@@ -39,12 +39,16 @@ abstract class Model
         $condition = '';
 
         foreach ($params as $key=>$value){
-            if (in_array($key,$this->attributes)){
-                $condition .= $key .'=\''.$value.'\' AND';
+            if (in_array($key,$this->attributes) || $key == 'id'){
+                $condition .= ' '.$key .'=\''.$value.'\' AND';
             }
         }
 
-        $command = $command.' WHERE '.$condition;
+        if (!empty($condition)) {
+          $condition = rtrim($condition,'AND');
+        }
+        $command = $command.' WHERE'.$condition;
+
         $db = $this->db();
         $result = $db->query($command);
         $return_array = null;
@@ -52,11 +56,17 @@ abstract class Model
             $return_array = array();
             while($row = $result->fetch_assoc()) {
                 $model = new $this->model_name();
+                $model->id = $row['id'];
                 foreach ($this->attributes as $attribute){
                     $model->$attribute = $row[$attribute];
                 }
                 $return_array[] = $model;
             }
+
+            if ($return_first) {
+                $return_array = $return_array[0];
+            }
+
         }
         $db->close();
         return $return_array;
@@ -92,20 +102,24 @@ abstract class Model
             $values_string = '';
             foreach ($this->attributes as $attribute){
                 $attributes_string .= $attribute .',';
-                $values_string .= $this->$attribute .',';
+                $values_string .= '\''.$this->$attribute .'\',';
             }
             $attributes_string = rtrim($attributes_string,',');
             $values_string = rtrim($values_string,',');
 
             $command .= '('.$attributes_string.') VALUES ('.$values_string.')';
-            $db = $this->db();
 
+            $db = $this->db();
             if ($db->query($command) === TRUE) {
                 echo "New record created successfully";
             } else {
                 echo "Error: " . $command . "<br>" . $db->error;
             }
         }
+    }
+
+    public function findByPk($id){
+      return $this->findAllByAttributes(array('id'=>$id),true);
     }
 
     public function delete(){
@@ -115,6 +129,4 @@ abstract class Model
     public function validate(){
         return true;
     }
-
-
 }

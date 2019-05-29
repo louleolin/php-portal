@@ -29,7 +29,7 @@
 
         <div style = "margin:30px">
 
-            <form action = "site/index" method = "post">
+            <form action = " " method = "post">
                 <label>UserName  :</label><input type = "text" name = "LoginForm[username]" class = "box"/><br /><br />
                 <label>Password  :</label><input type = "password" name = "LoginForm[password]" class = "box" /><br/><br />
                 <input type = "submit" value = " Submit "/><br />
