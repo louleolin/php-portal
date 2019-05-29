@@ -23,7 +23,10 @@ class SiteController extends Controller
             $user = $user->findAllByAttributes(array('email'=>$email,'password'=>$password),true);
             if (isset($user)){
                 $_SESSION['login_user_id'] = $user->id;
-                $this->redirect('site/admin');
+                if (User::checkRole($user->id,'admin')) {
+                  $_SESSION['login_user_role'] = 'admin';
+                }
+                $this->redirect('/submission/index');
             }else{
               $error = 'Invalid Username or Password! Please try agian.';
             }
@@ -38,6 +41,12 @@ class SiteController extends Controller
 
     public function actionError($code){
         $this->render('error_'.$code);
+    }
+
+    public function actionLogout(){
+      if(session_destroy()) {
+        $this->redirect('/');;
+      }
     }
 
 }

@@ -11,11 +11,9 @@ class SubmissionController extends Controller
     protected $viewFolder = 'submission';
 
     public function actionIndex(){
-        $user = new User();
         $user_id = $_SESSION['login_user_id'];
-        $user = $user->findByPk($user_id);
         $submissions = new Submission();
-        if ($user->getRole() === 'admin') {
+        if ($_SESSION['login_user_role'] == 'admin')) {
             $submissions = $submissions->findAll();
         }else {
           $submissions = $submissions->findAllByAttributes(array('create_user_id'=>$user_id));
@@ -24,6 +22,7 @@ class SubmissionController extends Controller
     }
 
     public function actionCreate(){
+      $error = null;
       if (isset($_POST['Submission'])) {
         $post_submission = $_POST['Submission'];
         $submission = new Submission();
@@ -31,20 +30,13 @@ class SubmissionController extends Controller
         $submission->content = $post_submission['content'];
         $submission->create_user_id = $_SESSION['login_user_id'];
         $submission->create_time = date("Y-m-d H:i:s");
-        $submission->save();
-        $this->redirect('/submission/index');
+        if($submission->save()){
+          $this->redirect('/submission/index');
+        }else {
+          $error = $submission->errors;
+        }
       }
-      $this->render('create');
-    }
-
-    public function actionView($id){
-      $submission = new Submission();
-      $submission = $submission->findByPk($id);
-      if (isset($submission)) {
-        $this->render('view',array('submission'=>$submission));
-      }else{
-        $this->redirect('/site/error/404');
-      }
+      $this->render('create',array('error'=>$error));
     }
 
 }

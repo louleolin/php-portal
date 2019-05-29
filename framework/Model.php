@@ -15,8 +15,9 @@ abstract class Model
     protected $model_name;
     protected $attributes;
     protected $rules;
+    public $errors;
 
-    protected static function db(){
+    protected function db(){
 
         static $db = null;
 
@@ -111,11 +112,12 @@ abstract class Model
 
             $db = $this->db();
             if ($db->query($command) === TRUE) {
-                echo "New record created successfully";
+              return true;
             } else {
-                echo "Error: " . $command . "<br>" . $db->error;
+              return false;
             }
         }
+        return false;
     }
 
     public function findByPk($id){
