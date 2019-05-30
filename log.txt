@@ -19,3 +19,12 @@ INSERT INTO submissions(title,content,create_time,create_user_id) VALUES ('test2
 
 
 
+UPDATE submissions SET 'title' = 'Submission1' 'content' = 'This is submission 1 and edit' 'create_time' = '2019-05-30 19:23:25' 'create_user_id' = '1'WHERE id ='3'
+UPDATE submissions SET 'title' = 'Submission1' 'content' = 'This is submission 1 and edit' 'create_time' = '2019-05-30 19:23:25' 'create_user_id' = '1'WHERE id ='3'
+UPDATE submissions SET 'title' = 'Submission1' 'content' = 'This is submission 1 and ' WHERE id ='3'
+UPDATE submissions SETtitle = 'Submission1'content = 'This is submission 1 and ' WHERE id ='3'
+UPDATE submissions SET title = 'Submission1' content = 'This is submission 1 and ' WHERE id ='3'
+UPDATE submissions SET title = 'Submission1', content = 'This is submission 1 and ' WHERE id ='3'
+UPDATE users SET password = '21232f297a57a5a743894a0e4a801fc3', firstname = 'admin', lastname = 'adminleo', role_id = '1' WHERE id ='1'
+UPDATE users SET password = '21232f297a57a5a743894a0e4a801fc3', firstname = 'admin', lastname = 'admin', role_id = '1' WHERE id ='1'
+UPDATE users SET password = '21232f297a57a5a743894a0e4a801fc3', firstname = 'Admin', lastname = 'Admin', role_id = '1' WHERE id ='1'

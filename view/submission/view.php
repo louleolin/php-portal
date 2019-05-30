@@ -1,18 +1,9 @@
 
-    <table>
-      <tbody>
-        <?php
-          if (isset($submission)) {?>
-            <tr>
-              <th>Title</th>
-              <th>Content</th>
-              <th>Create Time</th>
-            </tr>
-              <tr>
-                <td><a href="submission/view/<?=$submission->id;?>"><?=$submission->title;?></a></td>
-                <td><?=$submission->content;?></td>
-                <td><?=$submission->create_time;?></td>
-              </tr>
+<?php
+if (isset($submission)) {?>
+    <div style="width:70%;margin:auto;">
+        <h1><?=$submission->title;?></h1>
+          <br>
+              <p><?=$submission->content;?></p>
+            </div>
           <?php  }?>
-      </tbody>
-    </table>

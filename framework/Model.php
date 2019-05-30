@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fivium
- * Date: 29/05/19
- * Time: 8:20 AM
- */
-
 
 require_once('config.php');
 
@@ -17,6 +10,7 @@ abstract class Model
     protected $rules;
     public $errors;
     public $db;
+    protected $editable_attributes;
 
 
     public function __construct()
@@ -24,44 +18,43 @@ abstract class Model
         $this->db_initialise();
     }
 
-    protected function db_initialise(){
-
-        if ($this->db === null){
-            // Create
-            $this->db = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD,DB_DATABASE);
-
+    protected function db_initialise()
+    {
+        if ($this->db === null) {
+            $this->db = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_DATABASE);
             if ($this->db->connect_error) {
                 die("Connection failed: " . $this->db->connect_error);
             }
         }
     }
 
-    public function findAllByAttributes(array $params,$return_first = false){
+    public function findAllByAttributes(array $params, $return_first = false)
+    {
         $model_file= __DIR__.'/../model/'.$this->model_name.'.php';
-        require_once ($model_file);
+        require_once($model_file);
 
         $command = 'SELECT * FROM '.$this->table_name;
         $condition = '';
 
-        foreach ($params as $key=>$value){
-            if (in_array($key,$this->attributes) || $key == 'id'){
+        foreach ($params as $key=>$value) {
+            if (in_array($key, $this->attributes) || $key == 'id') {
                 $condition .= ' '.$key .'=\''.$value.'\' AND';
             }
         }
 
         if (!empty($condition)) {
-          $condition = rtrim($condition,'AND');
+            $condition = rtrim($condition, 'AND');
         }
         $command = $command.' WHERE'.$condition;
 
         $result = $this->db->query($command);
         $return_array = null;
-        if (isset($result) && $result){
+        if (isset($result) && $result) {
             $return_array = array();
-            while($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) {
                 $model = new $this->model_name();
                 $model->id = $row['id'];
-                foreach ($this->attributes as $attribute){
+                foreach ($this->attributes as $attribute) {
                     $model->$attribute = $row[$attribute];
                 }
                 $return_array[] = $model;
@@ -69,28 +62,27 @@ abstract class Model
 
             if ($return_first && !empty($return_array)) {
                 $return_array = $return_array[0];
-            }elseif (empty($return_array)){
+            } elseif (empty($return_array)) {
                 return null;
             }
-
         }
         return $return_array;
     }
 
 
-    public function findAll(){
+    public function findAll()
+    {
         $model_file= __DIR__.'/../model/'.$this->model_name.'.php';
-        require_once ($model_file);
-
+        require_once($model_file);
         $command = 'SELECT * FROM '.$this->table_name;
         $result = $this->db->query($command);
         $return_array = null;
-        if ($result->num_rows > 0){
+        if ($result->num_rows > 0) {
             $return_array = array();
-            while($row = $result->fetch_assoc()) {
+            while ($row = $result->fetch_assoc()) {
                 $model = new $this->model_name();
                 $model->id = $row['id'];
-                foreach ($this->attributes as $attribute){
+                foreach ($this->attributes as $attribute) {
                     $model->$attribute = $row[$attribute];
                 }
                 $return_array[] = $model;
@@ -99,43 +91,63 @@ abstract class Model
         return $return_array;
     }
 
-    public function save(){
+    public function save()
+    {
         $saved =false;
-        if ($this->validate()){
+        if ($this->validate()) {
             $command = 'INSERT INTO '.$this->table_name;
             $attributes_string = '';
             $values_string = '';
-            foreach ($this->attributes as $attribute){
+            foreach ($this->attributes as $attribute) {
                 $attributes_string .= $attribute .',';
                 $values_string .= '\''.$this->$attribute .'\',';
             }
-            $attributes_string = rtrim($attributes_string,',');
-            $values_string = rtrim($values_string,',');
+            $attributes_string = rtrim($attributes_string, ',');
+            $values_string = rtrim($values_string, ',');
 
             $command .= '('.$attributes_string.') VALUES ('.$values_string.')';
 
-            if ($this->db->query($command) === TRUE) {
-              $saved = true;
+            if ($this->db->query($command) === true) {
+                $saved = true;
             }
         }
         return $saved;
     }
 
-    public function findByPk($id){
-      return $this->findAllByAttributes(array('id'=>$id),true);
+    public function saveEdit()
+    {
+        $saved =false;
+        if ($this->validate(true)) {
+            $command = 'UPDATE '.$this->table_name.' SET';
+            foreach ($this->editable_attributes as $attribute) {
+                $command .= ' '.$attribute.' = \''.$this->$attribute.'\',';
+            }
+            $command = rtrim($command, ',');
+            $command .= ' WHERE id =\''.$this->id.'\'';
+            if ($this->db->query($command) === true) {
+                $saved = true;
+            }
+        }
+        return $saved;
     }
 
-    public function delete(){
+    public function findByPk($id)
+    {
+        return $this->findAllByAttributes(array('id'=>$id), true);
+    }
+
+    public function delete()
+    {
         $deleted = false;
         $command = 'DELETE FROM '.$this->table_name.' WHERE id = \''.$this->id.'\'';
-        if ($this->db->query($command) === TRUE) {
+        if ($this->db->query($command) === true) {
             $deleted = true;
         }
         return $deleted;
     }
 
-    public function validate(){
+    public function validate($edit=false)
+    {
         return true;
     }
-
 }

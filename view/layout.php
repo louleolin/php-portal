@@ -22,7 +22,7 @@
 
     <?php
         }else{?>
-            <div style="width:300px;margin:300px auto;">
+            <div style="margin:300px auto;">
                 <?=$content;?>
             </div>
     <?php

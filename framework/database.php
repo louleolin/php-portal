@@ -3,4 +3,3 @@
    define('DB_USERNAME', 'portal');
    define('DB_PASSWORD', 'portal');
    define('DB_DATABASE', 'portal');
-?>

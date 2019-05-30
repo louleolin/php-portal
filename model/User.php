@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fivium
- * Date: 29/05/19
- * Time: 9:17 AM
- */
 
 require_once(__DIR__ .'/../framework/config.php');
 require_once(__DIR__ .'/model_config.php');
@@ -22,25 +16,7 @@ class User extends Model
     protected $attributes = ['password', 'firstname', 'lastname', 'email', 'role_id'];
     protected $model_name = 'User';
     protected $table_name = 'users';
-
-    public static function loginValidation($email, $password)
-    {
-        $valid = false;
-        $command = 'SELECT * FROM users u WHERE u.email = ' . $email . ' AND u.password = \'' . $password . '\'';
-        $db = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD,DB_DATABASE);
-
-        if ($db->connect_error) {
-            die("Connection failed: " . $db->connect_error);
-        }
-        $result = $db->query($command);
-        if ($result) {
-            if ($result->num_rows > 0) {
-                $valid = true;
-            }
-        }
-        $db->close();
-        return $valid;
-    }
+    protected $editable_attributes = ['password','firstname','lastname','role_id'];
 
     public static function checkRole($id, $role)
     {
@@ -61,7 +37,7 @@ class User extends Model
         return $valid;
     }
 
-    public function validate()
+    public function validate($edit=false)
     {
         $error_array = array();
 
@@ -77,13 +53,16 @@ class User extends Model
             array_push($error_array, 'User last name cannot be null!');
         }
 
-        if (!isset($this->email) || empty($this->email)) {
-            array_push($error_array, 'User email cannot be null!');
-        } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-            array_push($error_array, 'User email address is invalid!');
-        } elseif ($this->findAllByAttributes(array('email' => $this->email))) {
-            array_push($error_array, 'User email address is in use!');
+        if (!$edit) {
+          if (!isset($this->email) || empty($this->email)) {
+              array_push($error_array, 'User email cannot be null!');
+          } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+              array_push($error_array, 'User email address is invalid!');
+          } elseif ($this->findAllByAttributes(array('email' => $this->email))) {
+              array_push($error_array, 'User email address is in use!');
+          }
         }
+
 
         if (!isset($this->role_id) || empty($this->role_id)) {
             array_push($error_array, 'User role cannot be null!');

@@ -40,4 +40,4 @@ CREATE TABLE submissions(
 INSERT INTO roles(name, task) VALUES('Administration','admin');
 INSERT INTO roles(name, task) VALUES('Member','member');
 
-INSERT INTO users(firstname,lastname,email,password,role_id) VALUES('admin','admin','admin@admin.com',MD5('admin'),1);
+INSERT INTO users(firstname,lastname,email,password,role_id) VALUES('Admin','Admin','admin@portal.com',MD5('admin'),1);
