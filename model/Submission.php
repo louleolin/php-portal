@@ -22,6 +22,19 @@ class Submission extends Model
     protected $table_name = 'submissions';
 
     public function validate(){
-      return true;
+        $error_array = array();
+      if (!isset($this->title) || empty($this->title)) {
+          array_push($error_array, 'Submission title cannot be null!');
+      }
+
+          if (!isset($this->content) || empty($this->content)){
+              array_push($error_array, 'Submission content cannot be null!');
+          }
+        if (empty($error_array)) {
+            return true;
+        } else {
+            $this->errors = $error_array;
+        }
+        return false;
     }
 }

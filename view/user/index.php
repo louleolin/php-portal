@@ -1,11 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Users</title>
-  </head>
-  <body>
-    <table>
+
+    <table class="view">
       <tbody>
         <?php
           if (isset($users)) {?>
@@ -27,6 +21,5 @@
          ?>
       </tbody>
     </table>
-    <a href="/submission/create"><button type="button" name="button">Create New Submission</button></a>
-  </body>
-</html>
+    <a href="/user/create"><button type="button" name="button">Create New User</button></a>
+

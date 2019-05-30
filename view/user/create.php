@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Submissions - Create</title>
-  </head>
-  <body>
+
     <?php
         if (isset($error)) {
           echo "<div class='error'><ul>";
@@ -15,19 +9,56 @@
         }
      ?>
     <form class="" action="create" method="post">
-        <input type="text" name="User[firstname]" value="">
-        <input type="text" name="User[lastname]" value="">
-        <input type="text" name="User[email]" value="">
-        <input type="password" name="User[password]" value="">
-          <select name="User[role_id]">
-            <?php
-            foreach ($roles as $role) {
-              echo "<option value="$role->id">$role->name</option>";
-            }
-            ?>
-          </select>
-        <button type="submit" name="button">Create</button>
-        <button type="button" name="button">Cancel</button>
+        <table class="create" style="width: 300px">
+            <tr>
+                <td>
+                    First Name
+                </td>
+                <td>
+                    <input type="text" name="User[firstname]" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Last Name
+                </td>
+                <td>
+                    <input type="text" name="User[lastname]" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Email
+                </td>
+                <td>
+                    <input type="text" name="User[email]" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Password
+                </td>
+                <td>
+                    <input type="password" name="User[password]" value="">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Role
+                </td>
+                <td>
+                    <select name="User[role_id]">
+                        <option value="">--Please-Select--</option>
+                        <?php
+                        foreach ($roles as $role) {
+                            echo "<option value=\"$role->id\">$role->name</option>";
+                        }
+                        ?>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <button type="submit" name="create">Create</button>
+        <button type="button" name="cancel" onclick="document.location.href ='/user/index'">Cancel</button>
     </form>
-  </body>
-</html>
+

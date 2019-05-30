@@ -3,18 +3,18 @@
 require_once(__DIR__.'/../framework/config.php');
 require_once(__DIR__.'/../model/model_config.php');
 
-session_start();
-
 
 class UserController extends Controller
 {
     protected $viewFolder = 'user';
 
+    protected $name = 'Portal - User';
+
     public function actionIndex(){
         $user = new User();
         $user_id = $_SESSION['login_user_id'];
         $user = $user->findByPk($user_id);
-        if (User::checkRole($user_id,'admin')) {
+        if ($user->checkRole($user_id,'admin')) {
           $user_list = $user->findAll();
           $this->render('index',array('users'=>$user_list));
         }else {
@@ -24,7 +24,7 @@ class UserController extends Controller
 
     public function actionCreate(){
       $error = null;
-      if ($_SESSION['login_user_role'] == admin) {
+      if ($_SESSION['login_user_role'] == 'admin') {
         if (isset($_POST['User'])) {
           $post_user = $_POST['User'];
           $new_user = new User();
@@ -34,7 +34,7 @@ class UserController extends Controller
           $new_user->password = md5($post_user['password']);
           $new_user->role_id = $post_user['role_id'];
           if($new_user->save()){
-            $this->redirect('/submission/index');
+            $this->redirect('/user/index');
           }else {
             $error = $new_user->errors;
           }

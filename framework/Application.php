@@ -32,7 +32,7 @@ class Application
             $this->param = $url_array[2];
         }else{
             $this->controller = 'site';
-            $this->action = 'index';
+            $this->action = 'error';
         }
         return $match;
     }

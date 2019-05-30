@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Submissions</title>
-  </head>
-  <body>
+
     <table>
       <tbody>
         <?php
@@ -22,5 +16,3 @@
           <?php  }?>
       </tbody>
     </table>
-  </body>
-</html>

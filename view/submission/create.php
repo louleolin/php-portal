@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Submissions - Create</title>
-  </head>
-  <body>
+
     <?php
         if (isset($error)) {
           echo "<div class='error'><ul>";
@@ -17,8 +11,6 @@
     <form class="" action="create" method="post">
         <input type="text" name="Submission[title]" value="">
         <input type="textfield" name="Submission[content]" value="">
-        <button type="submit" name="button">Create</button>
-        <button type="button" name="button">Cancel</button>
+        <button type="submit" name="create">Create</button>
+        <button type="button" name="cancel" onclick="document.location.href ='/submission/index'">Cancel</button>
     </form>
-  </body>
-</html>

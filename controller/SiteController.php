@@ -3,16 +3,15 @@
 require_once(__DIR__.'/../framework/config.php');
 require_once(__DIR__.'/../model/model_config.php');
 
-session_start();
 
 class SiteController extends Controller
 {
     protected $viewFolder = 'site';
-
+    protected $name = 'Portal';
 
     public function actionIndex(){
       if (isset($_SESSION['login_user_id'])) {
-        $this->redirect('/site/admin');
+        $this->redirect('/submission/index');
       }
 
         $error = null;
@@ -25,6 +24,8 @@ class SiteController extends Controller
                 $_SESSION['login_user_id'] = $user->id;
                 if (User::checkRole($user->id,'admin')) {
                   $_SESSION['login_user_role'] = 'admin';
+                }else{
+                    $_SESSION['login_user_role'] = 'member';
                 }
                 $this->redirect('/submission/index');
             }else{
@@ -40,6 +41,9 @@ class SiteController extends Controller
     }
 
     public function actionError($code){
+        if ($code !== '403'){
+            $code = '404';
+        }
         $this->render('error_'.$code);
     }
 

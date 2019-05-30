@@ -16,20 +16,24 @@ abstract class Model
     protected $attributes;
     protected $rules;
     public $errors;
+    public $db;
 
-    protected function db(){
 
-        static $db = null;
+    public function __construct()
+    {
+        $this->db_initialise();
+    }
 
-        if ($db === null){
-            // Create connection
-            $db = new \mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD,DB_DATABASE);
-            if ($db->connect_error) {
-                die("Connection failed: " . $db->connect_error);
+    protected function db_initialise(){
+
+        if ($this->db === null){
+            // Create
+            $this->db = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD,DB_DATABASE);
+
+            if ($this->db->connect_error) {
+                die("Connection failed: " . $this->db->connect_error);
             }
         }
-
-        return $db;
     }
 
     public function findAllByAttributes(array $params,$return_first = false){
@@ -50,8 +54,7 @@ abstract class Model
         }
         $command = $command.' WHERE'.$condition;
 
-        $db = $this->db();
-        $result = $db->query($command);
+        $result = $this->db->query($command);
         $return_array = null;
         if (isset($result) && $result){
             $return_array = array();
@@ -64,12 +67,13 @@ abstract class Model
                 $return_array[] = $model;
             }
 
-            if ($return_first) {
+            if ($return_first && !empty($return_array)) {
                 $return_array = $return_array[0];
+            }elseif (empty($return_array)){
+                return null;
             }
 
         }
-        $db->close();
         return $return_array;
     }
 
@@ -79,24 +83,24 @@ abstract class Model
         require_once ($model_file);
 
         $command = 'SELECT * FROM '.$this->table_name;
-        $db = $this->db();
-        $result = $db->query($command);
+        $result = $this->db->query($command);
         $return_array = null;
         if ($result->num_rows > 0){
             $return_array = array();
             while($row = $result->fetch_assoc()) {
                 $model = new $this->model_name();
+                $model->id = $row['id'];
                 foreach ($this->attributes as $attribute){
                     $model->$attribute = $row[$attribute];
                 }
                 $return_array[] = $model;
             }
         }
-        $db->close();
         return $return_array;
     }
 
     public function save(){
+        $saved =false;
         if ($this->validate()){
             $command = 'INSERT INTO '.$this->table_name;
             $attributes_string = '';
@@ -110,14 +114,11 @@ abstract class Model
 
             $command .= '('.$attributes_string.') VALUES ('.$values_string.')';
 
-            $db = $this->db();
-            if ($db->query($command) === TRUE) {
-              return true;
-            } else {
-              return false;
+            if ($this->db->query($command) === TRUE) {
+              $saved = true;
             }
         }
-        return false;
+        return $saved;
     }
 
     public function findByPk($id){
@@ -125,10 +126,16 @@ abstract class Model
     }
 
     public function delete(){
-
+        $deleted = false;
+        $command = 'DELETE FROM '.$this->table_name.' WHERE id = \''.$this->id.'\'';
+        if ($this->db->query($command) === TRUE) {
+            $deleted = true;
+        }
+        return $deleted;
     }
 
     public function validate(){
         return true;
     }
+
 }
