@@ -1,10 +1,12 @@
 # Installation Instruction
 
+## 1. Normal Setting Up
+
 ```
 Basic Environment Requirements:
 - Ubuntu 18.04 LTS or Similar
 - PHP 5.6 or above
-- MySQL
+- MySQL 5.5 or above
 ```
 - Place this folder in to `/var/www/`.
 - Run `sudo gedit /etc/apache2/apache.conf` and place the code below after other directories.
@@ -32,6 +34,8 @@ Basic Environment Requirements:
 ```
 - Run `docker pull louleo/portal:latest`.
 - Disable your local apache2 service.
--	Run `dokcer run -d -p 80:80 --name:portal --restart always louleo/portal:latest /usr/sbin/apache2ctl -D FOREGROUND`.
-- Run `docker exec portal bash -c 'service msyql restart'`
+-	Run `docker run -d -p 80:80 --name portal --restart always louleo/portal:latest /start.sh`.
 - Open your browser and navigate to 'localhost:80', log in with email:`admin@portal.com` and password: `admin` or email: `member@portal.com` and password `member`.
+
+
+#### *If you get any permission problem do please run command with `sudo`. Any other problem feel free to contact with me at louleolin@hotmail.com I will reach you back as soon as I can. Enjoy!* 
